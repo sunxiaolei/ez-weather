@@ -1,14 +1,10 @@
 package sunxl8.easyweather;
 
 import android.graphics.Typeface;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import rx.Subscriber;
@@ -16,7 +12,8 @@ import sunxl8.android_lib.utils.TimeUtils;
 import sunxl8.easyweather.base.WeatherBaseActivity;
 import sunxl8.easyweather.db.DBManager;
 import sunxl8.easyweather.db.WeatherEntity;
-import sunxl8.easyweather.entity.CityWeatherResponseEntity;
+import sunxl8.easyweather.entity.WeatherNowResponseEntity;
+import sunxl8.easyweather.entity.WeatherResponseEntity;
 import sunxl8.easyweather.network.WeatherRequest;
 
 public class TestActivity extends WeatherBaseActivity {
@@ -40,7 +37,7 @@ public class TestActivity extends WeatherBaseActivity {
     protected void initData() {
 
 //        WeatherRequest.doSearchCity("上海")
-//                .subscribe(new Subscriber<CitySearchResponseEntity>() {
+//                .subscribe(new Subscriber<SearchResponseEntity>() {
 //                    @Override
 //                    public void onCompleted() {
 //
@@ -52,7 +49,7 @@ public class TestActivity extends WeatherBaseActivity {
 //                    }
 //
 //                    @Override
-//                    public void onNext(CitySearchResponseEntity entity) {
+//                    public void onNext(SearchResponseEntity entity) {
 //                        tvTest.setText(entity.getHeWeather5().get(0).getStatus());
 //                    }
 //                });
@@ -64,14 +61,35 @@ public class TestActivity extends WeatherBaseActivity {
             entity = list.get(0);
             show(entity);
         } else {
+//            getWeatherNow();
             getWeather();
         }
 
     }
 
     private void getWeather() {
+        WeatherRequest.doGetWeather("上海")
+                .subscribe(new Subscriber<WeatherResponseEntity>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(WeatherResponseEntity entity) {
+                        save(entity.getHeWeather5().get(0));
+                    }
+                });
+    }
+
+    private void getWeatherNow() {
         WeatherRequest.doGetWeatherNow("上海")
-                .subscribe(new Subscriber<CityWeatherResponseEntity>() {
+                .subscribe(new Subscriber<WeatherNowResponseEntity>() {
                     @Override
                     public void onCompleted() {
 
@@ -83,13 +101,13 @@ public class TestActivity extends WeatherBaseActivity {
                     }
 
                     @Override
-                    public void onNext(CityWeatherResponseEntity entity) {
+                    public void onNext(WeatherNowResponseEntity entity) {
                         save(entity.getHeWeather5().get(0));
                     }
                 });
     }
 
-    private void save(CityWeatherResponseEntity.HeWeather5Bean bean) {
+    private void save(WeatherResponseEntity.HeWeather5Bean bean) {
         WeatherEntity entity = new WeatherEntity();
         entity.setCity(bean.getBasic().getCity());
         entity.setCityId(bean.getBasic().getId());
@@ -111,6 +129,30 @@ public class TestActivity extends WeatherBaseActivity {
         entity.setDir(bean.getNow().getWind().getDir());
         entity.setSc(bean.getNow().getWind().getSc());
         entity.setSpd(bean.getNow().getWind().getSpd());
+
+        entity.setAqi(bean.getAqi().getCity().getAqi());
+        entity.setCo(bean.getAqi().getCity().getCo());
+        entity.setNo2(bean.getAqi().getCity().getNo2());
+        entity.setO3(bean.getAqi().getCity().getO3());
+        entity.setPm10(bean.getAqi().getCity().getPm10());
+        entity.setPm25(bean.getAqi().getCity().getPm25());
+        entity.setQlty(bean.getAqi().getCity().getQlty());
+        entity.setSo2(bean.getAqi().getCity().getSo2());
+
+        entity.setComfBrf(bean.getSuggestion().getComf().getBrf());
+        entity.setComfBrf(bean.getSuggestion().getComf().getTxt());
+        entity.setCwBrf(bean.getSuggestion().getCw().getBrf());
+        entity.setCwTxt(bean.getSuggestion().getCw().getTxt());
+        entity.setDrsgBrf(bean.getSuggestion().getDrsg().getBrf());
+        entity.setDrsgTxt(bean.getSuggestion().getDrsg().getTxt());
+        entity.setFluBrf(bean.getSuggestion().getFlu().getBrf());
+        entity.setFluTxt(bean.getSuggestion().getFlu().getTxt());
+        entity.setSportBrf(bean.getSuggestion().getSport().getBrf());
+        entity.setSportTxt(bean.getSuggestion().getSport().getTxt());
+        entity.setTravBrf(bean.getSuggestion().getTrav().getBrf());
+        entity.setTravTxt(bean.getSuggestion().getTrav().getTxt());
+        entity.setUvBrf(bean.getSuggestion().getUv().getBrf());
+        entity.setUvTxt(bean.getSuggestion().getUv().getTxt());
         entity.save();
         show(entity);
     }
@@ -134,7 +176,29 @@ public class TestActivity extends WeatherBaseActivity {
                 + "风向（360度）：" + entity.getDeg() + "\r\n"
                 + "风向：" + entity.getDir() + "\r\n"
                 + "风力：" + entity.getSc() + "\r\n"
-                + "风速（kmph）：" + entity.getSpd() + "\r\n";
+                + "风速（kmph）：" + entity.getSpd() + "\r\n"
+                + "AQI：" + entity.getAqi() + "\r\n"
+                + "CO：" + entity.getCo() + "\r\n"
+                + "NO2：" + entity.getNo2() + "\r\n"
+                + "O3：" + entity.getO3() + "\r\n"
+                + "PM1010：" + entity.getPm10() + "\r\n"
+                + "PM2.5：" + entity.getPm25() + "\r\n"
+                + "空气质量：" + entity.getQlty() + "\r\n"
+                + "-->：" + entity.getSo2() + "\r\n"
+                + "舒适度指数：" + entity.getComfBrf() + "\r\n"
+                + "-->：" + entity.getComfTxt() + "\r\n"
+                + "洗车指数：" + entity.getCwBrf() + "\r\n"
+                + "-->：" + entity.getCwTxt() + "\r\n"
+                + "穿衣指数：" + entity.getDrsgBrf() + "\r\n"
+                + "-->：" + entity.getDrsgTxt() + "\r\n"
+                + "感冒指数：" + entity.getFluBrf() + "\r\n"
+                + "-->：" + entity.getFluTxt() + "\r\n"
+                + "运动指数：" + entity.getSportBrf() + "\r\n"
+                + "-->：" + entity.getSportTxt() + "\r\n"
+                + "旅游指数：" + entity.getTravBrf() + "\r\n"
+                + "-->：" + entity.getTravTxt() + "\r\n"
+                + "紫外线指数：" + entity.getUvBrf() + "\r\n"
+                + "-->：" + entity.getUvTxt() + "\r\n";
         tvTest.setText(str);
         Typeface tf = Typeface.createFromAsset(getAssets(), "fonts/Enoksen.ttf");
         tvTest.setTypeface(tf);

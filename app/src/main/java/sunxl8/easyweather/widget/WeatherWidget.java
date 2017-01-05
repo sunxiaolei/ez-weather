@@ -10,6 +10,7 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.widget.RemoteViews;
 
+import sunxl8.android_lib.utils.SizeUtils;
 import sunxl8.easyweather.R;
 
 /**
@@ -49,19 +50,19 @@ public class WeatherWidget extends AppWidgetProvider {
     }
 
     private static Bitmap getTime(Context context) {
-        Bitmap mBitmap = Bitmap.createBitmap(560, 400, Bitmap.Config.ARGB_4444);
+        Bitmap mBitmap = Bitmap.createBitmap(SizeUtils.dp2px(context, 220), SizeUtils.dp2px(context, 140), Bitmap.Config.ARGB_4444);
         Canvas mCanvas = new Canvas(mBitmap);
         Paint paint = new Paint();
-        Typeface tf = Typeface.createFromAsset(context.getAssets(), "fonts/Enoksen.ttf");
+        Typeface tf = Typeface.createFromAsset(context.getAssets(), "fonts/Goodbye.ttf");
         paint.setAntiAlias(true);
         paint.setAlpha(10);
         paint.setSubpixelText(true);
         paint.setTypeface(tf);
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(Color.WHITE);
-        paint.setTextSize(180);
+        paint.setTextSize(SizeUtils.dp2px(context, 80));
         paint.setTextAlign(Paint.Align.CENTER);
-        mCanvas.drawText("18:30", 280, 270, paint);
+        mCanvas.drawText("18:30", SizeUtils.dp2px(context, 110), SizeUtils.dp2px(context, 100), paint);
         return mBitmap;
     }
 }

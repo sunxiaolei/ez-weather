@@ -6,7 +6,7 @@ import java.util.List;
  * Created by sunxl8 on 2017/1/3.
  */
 
-public class CitySearchResponseEntity {
+public class SearchResponseEntity {
 
 
     private List<HeWeather5Bean> HeWeather5;

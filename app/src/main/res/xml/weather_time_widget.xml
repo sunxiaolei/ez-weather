@@ -4,7 +4,7 @@
     android:initialKeyguardLayout="@layout/widget_weather"
     android:initialLayout="@layout/widget_weather"
     android:minHeight="110dp"
-    android:minWidth="320dp"
+    android:minWidth="250dp"
     android:previewImage="@drawable/weather_widget_banner"
     android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="0"
