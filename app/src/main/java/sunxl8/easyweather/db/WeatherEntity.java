@@ -2,11 +2,13 @@ package sunxl8.easyweather.db;
 
 import org.litepal.crud.DataSupport;
 
+import java.io.Serializable;
+
 /**
  * Created by sunxl8 on 2017/1/4.
  */
 
-public class WeatherEntity extends DataSupport {
+public class WeatherEntity extends DataSupport implements Serializable{
 
     private long id;
     /**

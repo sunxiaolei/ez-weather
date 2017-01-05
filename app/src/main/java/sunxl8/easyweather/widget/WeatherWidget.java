@@ -2,7 +2,9 @@ package sunxl8.easyweather.widget;
 
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -12,6 +14,7 @@ import android.widget.RemoteViews;
 
 import sunxl8.android_lib.utils.SizeUtils;
 import sunxl8.easyweather.R;
+import sunxl8.easyweather.db.WeatherEntity;
 
 /**
  * Created by sunxl8 on 2017/1/4.
@@ -25,7 +28,7 @@ public class WeatherWidget extends AppWidgetProvider {
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_weather);
 
-        views.setImageViewBitmap(R.id.iv_time, getTime(context));
+        views.setImageViewBitmap(R.id.iv_time, getTime(context, "N/A", "N/A"));
 
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
@@ -49,20 +52,46 @@ public class WeatherWidget extends AppWidgetProvider {
         // Enter relevant functionality for when the last widget is disabled
     }
 
-    private static Bitmap getTime(Context context) {
-        Bitmap mBitmap = Bitmap.createBitmap(SizeUtils.dp2px(context, 220), SizeUtils.dp2px(context, 140), Bitmap.Config.ARGB_4444);
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        String weather = intent.getStringExtra("weather");
+        String city = intent.getStringExtra("city");
+        if (weather != null && city != null) {
+            RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
+                    R.layout.widget_weather);
+            remoteViews.setImageViewBitmap(R.id.iv_time, getTime(context, city, weather));
+            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+            //区分：RemoteViews代表App Widget中的所有空间，而ComponentName代表整个App Widget对象
+            ComponentName componentName = new ComponentName(context, WeatherWidget.class);
+            appWidgetManager.updateAppWidget(componentName, remoteViews);
+        }
+    }
+
+    private static Bitmap getTime(Context context, String city, String weather) {
+        Bitmap mBitmap = Bitmap.createBitmap(SizeUtils.dp2px(context, 380), SizeUtils.dp2px(context, 200), Bitmap.Config.ARGB_4444);
         Canvas mCanvas = new Canvas(mBitmap);
+//        mCanvas.drawColor(Color.BLACK);
+        Typeface tf = Typeface.createFromAsset(context.getAssets(), "fonts/byxs.ttf");
+
         Paint paint = new Paint();
-        Typeface tf = Typeface.createFromAsset(context.getAssets(), "fonts/Goodbye.ttf");
         paint.setAntiAlias(true);
-        paint.setAlpha(10);
         paint.setSubpixelText(true);
         paint.setTypeface(tf);
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(Color.WHITE);
-        paint.setTextSize(SizeUtils.dp2px(context, 80));
+        paint.setTextSize(SizeUtils.dp2px(context, 120));
         paint.setTextAlign(Paint.Align.CENTER);
-        mCanvas.drawText("18:30", SizeUtils.dp2px(context, 110), SizeUtils.dp2px(context, 100), paint);
+        mCanvas.drawText(weather, SizeUtils.dp2px(context, 190), SizeUtils.dp2px(context, 160), paint);
+
+        Paint paintCity = new Paint();
+        paintCity.setAntiAlias(true);
+        paintCity.setSubpixelText(true);
+        paintCity.setTypeface(tf);
+        paintCity.setStyle(Paint.Style.FILL);
+        paintCity.setColor(Color.WHITE);
+        paintCity.setTextSize(SizeUtils.dp2px(context, 20));
+        paintCity.setTextAlign(Paint.Align.LEFT);
+        mCanvas.drawText(city, SizeUtils.dp2px(context, 0), SizeUtils.dp2px(context, 25), paintCity);
         return mBitmap;
     }
 }

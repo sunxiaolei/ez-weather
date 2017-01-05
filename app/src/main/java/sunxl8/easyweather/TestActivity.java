@@ -1,5 +1,6 @@
 package sunxl8.easyweather;
 
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.widget.TextView;
 
@@ -158,6 +159,11 @@ public class TestActivity extends WeatherBaseActivity {
     }
 
     private void show(WeatherEntity entity) {
+        Intent intent = new Intent("android.appwidget.action.APPWIDGET_UPDATE");
+        intent.putExtra("weather", entity.getTxt());
+        intent.putExtra("city", entity.getCity() + "." + entity.getCnty());
+        sendBroadcast(intent);
+
         String str = "天气状况：" + entity.getTxt() + "\r\n"
                 + "城市名称：" + entity.getCity() + "\r\n"
                 + "国家：" + entity.getCnty() + "\r\n"
@@ -200,7 +206,7 @@ public class TestActivity extends WeatherBaseActivity {
                 + "紫外线指数：" + entity.getUvBrf() + "\r\n"
                 + "-->：" + entity.getUvTxt() + "\r\n";
         tvTest.setText(str);
-        Typeface tf = Typeface.createFromAsset(getAssets(), "fonts/Enoksen.ttf");
+        Typeface tf = Typeface.createFromAsset(getAssets(), "fonts/Goodbye.ttf");
         tvTest.setTypeface(tf);
     }
 }
