@@ -161,7 +161,10 @@ public class TestActivity extends WeatherBaseActivity {
     private void show(WeatherEntity entity) {
         Intent intent = new Intent("android.appwidget.action.APPWIDGET_UPDATE");
         intent.putExtra("weather", entity.getTxt());
-        intent.putExtra("city", entity.getCity() + "." + entity.getCnty());
+        intent.putExtra("city",entity.getCity() + "." + entity.getCnty());
+        intent.putExtra("tem", entity.getTmp() + "℃");
+        intent.putExtra("pm25", "PM2.5：" + entity.getPm25());
+        intent.putExtra("qlty", entity.getQlty());
         sendBroadcast(intent);
 
         String str = "天气状况：" + entity.getTxt() + "\r\n"

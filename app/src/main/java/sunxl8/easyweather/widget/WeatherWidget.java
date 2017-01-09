@@ -28,7 +28,7 @@ public class WeatherWidget extends AppWidgetProvider {
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_weather);
 
-        views.setImageViewBitmap(R.id.iv_time, getTime(context, "N/A", "N/A"));
+        views.setImageViewBitmap(R.id.iv_time, getTime(context, "N/A", "N/A", "N/A", "N/A", "N/A"));
 
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
@@ -56,18 +56,19 @@ public class WeatherWidget extends AppWidgetProvider {
     public void onReceive(Context context, Intent intent) {
         String weather = intent.getStringExtra("weather");
         String city = intent.getStringExtra("city");
-        if (weather != null && city != null) {
-            RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
-                    R.layout.widget_weather);
-            remoteViews.setImageViewBitmap(R.id.iv_time, getTime(context, city, weather));
-            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-            //区分：RemoteViews代表App Widget中的所有空间，而ComponentName代表整个App Widget对象
-            ComponentName componentName = new ComponentName(context, WeatherWidget.class);
-            appWidgetManager.updateAppWidget(componentName, remoteViews);
-        }
+        String tem = intent.getStringExtra("tem");
+        String pm25 = intent.getStringExtra("pm25");
+        String qlty = intent.getStringExtra("qlty");
+        RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
+                R.layout.widget_weather);
+        remoteViews.setImageViewBitmap(R.id.iv_time, getTime(context, city, weather, tem, qlty, pm25));
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+        //区分：RemoteViews代表App Widget中的所有空间，而ComponentName代表整个App Widget对象
+        ComponentName componentName = new ComponentName(context, WeatherWidget.class);
+        appWidgetManager.updateAppWidget(componentName, remoteViews);
     }
 
-    private static Bitmap getTime(Context context, String city, String weather) {
+    private static Bitmap getTime(Context context, String city, String weather, String tem, String qlty, String pm25) {
         Bitmap mBitmap = Bitmap.createBitmap(SizeUtils.dp2px(context, 380), SizeUtils.dp2px(context, 200), Bitmap.Config.ARGB_4444);
         Canvas mCanvas = new Canvas(mBitmap);
 //        mCanvas.drawColor(Color.BLACK);
@@ -92,6 +93,27 @@ public class WeatherWidget extends AppWidgetProvider {
         paintCity.setTextSize(SizeUtils.dp2px(context, 20));
         paintCity.setTextAlign(Paint.Align.LEFT);
         mCanvas.drawText(city, SizeUtils.dp2px(context, 0), SizeUtils.dp2px(context, 25), paintCity);
+
+        Paint paintTem = new Paint();
+        paintTem.setAntiAlias(true);
+        paintTem.setSubpixelText(true);
+        paintTem.setTypeface(tf);
+        paintTem.setStyle(Paint.Style.FILL);
+        paintTem.setColor(Color.WHITE);
+        paintTem.setTextSize(SizeUtils.dp2px(context, 50));
+        paintTem.setTextAlign(Paint.Align.RIGHT);
+        mCanvas.drawText(tem, SizeUtils.dp2px(context, 380), SizeUtils.dp2px(context, 70), paintTem);
+
+        Paint paintQlty = new Paint();
+        paintQlty.setAntiAlias(true);
+        paintQlty.setSubpixelText(true);
+        paintQlty.setStyle(Paint.Style.FILL);
+        paintQlty.setColor(Color.WHITE);
+        paintQlty.setTextSize(SizeUtils.dp2px(context, 20));
+        paintQlty.setTextAlign(Paint.Align.LEFT);
+        mCanvas.drawText(qlty + "           " + pm25, SizeUtils.dp2px(context, 0), SizeUtils.dp2px(context, 195), paintQlty);
+
         return mBitmap;
     }
+
 }
