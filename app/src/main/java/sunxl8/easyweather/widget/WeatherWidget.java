@@ -10,6 +10,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.text.TextUtils;
 import android.widget.RemoteViews;
 
 import sunxl8.android_lib.utils.SizeUtils;
@@ -59,25 +60,33 @@ public class WeatherWidget extends AppWidgetProvider {
         String tem = intent.getStringExtra("tem");
         String pm25 = intent.getStringExtra("pm25");
         String qlty = intent.getStringExtra("qlty");
-        RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
-                R.layout.widget_weather);
-        remoteViews.setImageViewBitmap(R.id.iv_time, getTime(context, city, weather, tem, qlty, pm25));
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-        //区分：RemoteViews代表App Widget中的所有空间，而ComponentName代表整个App Widget对象
-        ComponentName componentName = new ComponentName(context, WeatherWidget.class);
-        appWidgetManager.updateAppWidget(componentName, remoteViews);
+        if (!TextUtils.isEmpty(weather)
+                && !TextUtils.isEmpty(city)
+                && !TextUtils.isEmpty(tem)
+                && !TextUtils.isEmpty(pm25)
+                && !TextUtils.isEmpty(qlty)) {
+
+            RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
+                    R.layout.widget_weather);
+            remoteViews.setImageViewBitmap(R.id.iv_time, getTime(context, city, weather, tem, qlty, pm25));
+            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+            //区分：RemoteViews代表App Widget中的所有空间，而ComponentName代表整个App Widget对象
+            ComponentName componentName = new ComponentName(context, WeatherWidget.class);
+            appWidgetManager.updateAppWidget(componentName, remoteViews);
+        }
     }
 
     private static Bitmap getTime(Context context, String city, String weather, String tem, String qlty, String pm25) {
         Bitmap mBitmap = Bitmap.createBitmap(SizeUtils.dp2px(context, 380), SizeUtils.dp2px(context, 200), Bitmap.Config.ARGB_4444);
         Canvas mCanvas = new Canvas(mBitmap);
 //        mCanvas.drawColor(Color.BLACK);
-        Typeface tf = Typeface.createFromAsset(context.getAssets(), "fonts/byxs.ttf");
+        Typeface tfC = Typeface.createFromAsset(context.getAssets(), "fonts/byxs.ttf");
+        Typeface tfE = Typeface.createFromAsset(context.getAssets(), "fonts/Enoksen.ttf");
 
         Paint paint = new Paint();
         paint.setAntiAlias(true);
         paint.setSubpixelText(true);
-        paint.setTypeface(tf);
+        paint.setTypeface(tfC);
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(Color.WHITE);
         paint.setTextSize(SizeUtils.dp2px(context, 120));
@@ -87,17 +96,17 @@ public class WeatherWidget extends AppWidgetProvider {
         Paint paintCity = new Paint();
         paintCity.setAntiAlias(true);
         paintCity.setSubpixelText(true);
-        paintCity.setTypeface(tf);
+        paintCity.setTypeface(tfC);
         paintCity.setStyle(Paint.Style.FILL);
         paintCity.setColor(Color.WHITE);
-        paintCity.setTextSize(SizeUtils.dp2px(context, 20));
+        paintCity.setTextSize(SizeUtils.dp2px(context, 30));
         paintCity.setTextAlign(Paint.Align.LEFT);
-        mCanvas.drawText(city, SizeUtils.dp2px(context, 0), SizeUtils.dp2px(context, 25), paintCity);
+        mCanvas.drawText(city, SizeUtils.dp2px(context, 0), SizeUtils.dp2px(context, 45), paintCity);
 
         Paint paintTem = new Paint();
         paintTem.setAntiAlias(true);
         paintTem.setSubpixelText(true);
-        paintTem.setTypeface(tf);
+        paintTem.setTypeface(tfC);
         paintTem.setStyle(Paint.Style.FILL);
         paintTem.setColor(Color.WHITE);
         paintTem.setTextSize(SizeUtils.dp2px(context, 50));
@@ -107,11 +116,22 @@ public class WeatherWidget extends AppWidgetProvider {
         Paint paintQlty = new Paint();
         paintQlty.setAntiAlias(true);
         paintQlty.setSubpixelText(true);
+        paintQlty.setTypeface(tfC);
         paintQlty.setStyle(Paint.Style.FILL);
         paintQlty.setColor(Color.WHITE);
-        paintQlty.setTextSize(SizeUtils.dp2px(context, 20));
-        paintQlty.setTextAlign(Paint.Align.LEFT);
-        mCanvas.drawText(qlty + "           " + pm25, SizeUtils.dp2px(context, 0), SizeUtils.dp2px(context, 195), paintQlty);
+        paintQlty.setTextSize(SizeUtils.dp2px(context, 50));
+        paintQlty.setTextAlign(Paint.Align.RIGHT);
+        mCanvas.drawText(qlty, SizeUtils.dp2px(context, 380), SizeUtils.dp2px(context, 195), paintQlty);
+
+//        Paint paintPM = new Paint();
+//        paintPM.setAntiAlias(true);
+//        paintPM.setSubpixelText(true);
+//        paintPM.setTypeface(tfE);
+//        paintPM.setStyle(Paint.Style.FILL);
+//        paintPM.setColor(Color.WHITE);
+//        paintPM.setTextSize(SizeUtils.dp2px(context, 20));
+//        paintPM.setTextAlign(Paint.Align.LEFT);
+//        mCanvas.drawText(pm25, SizeUtils.dp2px(context, 0), SizeUtils.dp2px(context, 195), paintPM);
 
         return mBitmap;
     }
