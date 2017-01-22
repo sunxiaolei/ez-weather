@@ -35,7 +35,8 @@ dependencies {
     //ButterKnife
     compile 'com.jakewharton:butterknife:8.4.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
-    //BottomSheet
-    compile 'com.flipboard:bottomsheet-core:1.5.2'
-    compile 'com.flipboard:bottomsheet-commons:1.5.2'
+    //indicator
+    compile 'me.relex:circleindicator:1.2.2@aar'
+    //dialog
+    compile 'com.github.d-max:spots-dialog:0.7@aar'
 }

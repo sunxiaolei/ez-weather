@@ -17,4 +17,9 @@ public class DBManager {
                 .where("date = ?", date)
                 .find(WeatherEntity.class);
     }
+
+    public static List<CityEntity> queryCity() {
+        return DataSupport
+                .findAll(CityEntity.class);
+    }
 }

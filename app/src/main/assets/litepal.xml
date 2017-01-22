@@ -8,5 +8,7 @@
     <list>
         <!-- 天气 -->
         <mapping class="sunxl8.easyweather.db.WeatherEntity" />
+        <!-- 添加的城市 -->
+        <mapping class="sunxl8.easyweather.db.CityEntity" />
     </list>
 </litepal>
