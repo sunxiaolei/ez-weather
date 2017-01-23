@@ -40,7 +40,7 @@ public class WeatherResponseEntity {
         private List<WeatherHourly> hourly_forecast;
 
         public WeatherAqi getAqi() {
-            return aqi;
+            return aqi == null ? new WeatherAqi() : aqi;
         }
 
         public void setAqi(WeatherAqi aqi) {

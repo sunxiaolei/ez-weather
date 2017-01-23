@@ -17,7 +17,7 @@ public class WeatherAqi {
     private CityBean city;
 
     public CityBean getCity() {
-        return city;
+        return city == null ? new CityBean() : city;
     }
 
     public void setCity(CityBean city) {
@@ -36,14 +36,14 @@ public class WeatherAqi {
          * so2 : 10
          */
 
-        private String aqi;
-        private String co;
-        private String no2;
-        private String o3;
-        private String pm10;
-        private String pm25;
-        private String qlty;
-        private String so2;
+        private String aqi = "null";
+        private String co = "null";
+        private String no2 = "null";
+        private String o3 = "null";
+        private String pm10 = "null";
+        private String pm25 = "null";
+        private String qlty = "null";
+        private String so2 = "null";
 
         public String getAqi() {
             return aqi;

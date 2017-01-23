@@ -3,6 +3,8 @@ package sunxl8.easyweather.ui;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import com.orhanobut.logger.Logger;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -82,7 +84,9 @@ public class WeatherFragment extends WeatherBaseFragment {
 
                     @Override
                     public void onError(Throwable e) {
-
+                        mActivity.dismissLoading();
+                        mActivity.showToast(e.getMessage());
+                        Logger.e(e.getMessage());
                     }
 
                     @Override

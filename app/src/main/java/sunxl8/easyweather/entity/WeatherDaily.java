@@ -20,6 +20,7 @@ public class WeatherDaily {
      * pres : 1005
      * tmp : {"max":"29","min":"22"}
      * vis : 10
+     * "uv":"3"
      * wind : {"deg":"339","dir":"北风","sc":"4-5","spd":"24"}
      */
 
@@ -32,7 +33,16 @@ public class WeatherDaily {
     private String pres;
     private TmpBean tmp;
     private String vis;
+    private String uv;
     private WindBean wind;
+
+    public String getUv() {
+        return uv;
+    }
+
+    public void setUv(String uv) {
+        this.uv = uv;
+    }
 
     public AstroBean getAstro() {
         return astro;

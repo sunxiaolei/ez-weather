@@ -11,6 +11,7 @@ public class WeatherSuggestion {
 
 
     /**
+     * air:{"brf":"中","txt":"气象条件对空气污染物稀释、扩散和清除无明显影响，易感人群应适当减少室外活动时间。"}
      * comf : {"brf":"较舒适","txt":"白天天气晴好，您在这种天气条件下，会感觉早晚凉爽、舒适，午后偏热。"}
      * cw : {"brf":"较不宜","txt":"较不宜洗车，未来一天无雨，风力较大，如果执意擦洗汽车，要做好蒙上污垢的心理准备。"}
      * drsg : {"brf":"热","txt":"天气热，建议着短裙、短裤、短薄外套、T恤等夏季服装。"}
@@ -20,6 +21,7 @@ public class WeatherSuggestion {
      * uv : {"brf":"强","txt":"紫外线辐射强，建议涂擦SPF20左右、PA++的防晒护肤品。避免在10点至14点暴露于日光下。"}
      */
 
+    private AirBean air;
     private ComfBean comf;
     private CwBean cw;
     private DrsgBean drsg;
@@ -82,6 +84,29 @@ public class WeatherSuggestion {
 
     public void setUv(UvBean uv) {
         this.uv = uv;
+    }
+
+    public static class AirBean {
+
+        private String brf;
+
+        private String txt;
+
+        public String getBrf() {
+            return brf;
+        }
+
+        public void setBrf(String brf) {
+            this.brf = brf;
+        }
+
+        public String getTxt() {
+            return txt;
+        }
+
+        public void setTxt(String txt) {
+            this.txt = txt;
+        }
     }
 
     public static class ComfBean {
