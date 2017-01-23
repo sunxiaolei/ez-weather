@@ -41,13 +41,17 @@
         </activity>
 
         <activity
-            android:name=".ui.MainActivity">
+            android:name=".ui.MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ui.CitySelectActivity"
+            android:screenOrientation="portrait"/>
 
         <receiver android:name=".widget.WeatherWidget">
             <intent-filter>
@@ -60,7 +64,9 @@
         </receiver>
 
         <service android:name="com.amap.api.location.APSService"/>
-        <meta-data android:name="com.amap.api.v2.apikey" android:value="72282fa7ef8ae36a0e31022081ad8935"/>
+        <meta-data
+            android:name="com.amap.api.v2.apikey"
+            android:value="72282fa7ef8ae36a0e31022081ad8935"/>
     </application>
 
 </manifest>

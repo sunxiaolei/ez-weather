@@ -12,9 +12,9 @@ import java.util.List;
 
 public class DBManager {
 
-    public static List<WeatherEntity> queryWeatherByDateAndCity(String date, String city) {
+    public static List<WeatherEntity> queryWeatherByDateAndCityCode(String date, String code) {
         return DataSupport
-                .where("date = ? and city = ?", date, city)
+                .where("date = ? and cityId = ?", date, code)
                 .find(WeatherEntity.class);
     }
 

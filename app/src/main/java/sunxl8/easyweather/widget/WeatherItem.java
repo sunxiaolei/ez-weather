@@ -1,6 +1,7 @@
 package sunxl8.easyweather.widget;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.security.cert.CertSelector;
 import java.util.List;
 
 import sunxl8.android_lib.utils.AndroidUtils;
@@ -47,10 +49,40 @@ public class WeatherItem extends LinearLayout {
     }
 
     public void setItemSpec(String spec) {
+        //优，良，轻度污染，中度污染，重度污染，严重污染
+        switch (spec) {
+            case "优":
+                tvSpec.setTextColor(Color.parseColor("#4CAF50"));
+                tvSpec.setText(spec);
+                break;
+            case "良":
+                tvSpec.setTextColor(Color.parseColor("#00BCD4"));
+                tvSpec.setText(spec);
+                break;
+            case "轻度污染":
+                tvSpec.setTextColor(Color.parseColor("#FF7043"));
+                tvSpec.setText("轻度");
+                break;
+            case "中度污染":
+                tvSpec.setTextColor(Color.parseColor("#E91E63"));
+                tvSpec.setText("中度");
+                break;
+            case "重度污染":
+                tvSpec.setTextColor(Color.parseColor("#6D4C41"));
+                tvSpec.setText("重度");
+                break;
+            case "严重污染":
+                tvSpec.setTextColor(Color.parseColor("#212121"));
+                tvSpec.setText("爆表");
+                break;
+            default:
+                tvSpec.setText(spec);
+                break;
+        }
         Typeface tfC = Typeface.createFromAsset(mContext.getAssets(), "fonts/byxs.ttf");
         tvSpec.setTypeface(tfC);
         tvSpec.setVisibility(View.VISIBLE);
-        tvSpec.setText(spec);
+
     }
 
     public void setItemData(List<String> data) {

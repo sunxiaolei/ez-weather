@@ -9,6 +9,7 @@ import org.litepal.crud.DataSupport;
 public class CityEntity extends DataSupport {
 
     private String city;
+    private String code;
 
     public String getCity() {
         return city;
@@ -16,5 +17,13 @@ public class CityEntity extends DataSupport {
 
     public void setCity(String city) {
         this.city = city;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 }

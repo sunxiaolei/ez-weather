@@ -37,10 +37,10 @@ public class WeatherRequest {
                 .compose(SchedulersCompat.applyIoSchedulers());
     }
 
-    public static Observable<WeatherResponseEntity> doGetWeather(String city) {
+    public static Observable<WeatherResponseEntity> doGetWeather(String code) {
         Map<String, String> map = new HashMap<>();
         map.put("key", Constant.HEWEATHER_KEY);
-        map.put("city", city);
+        map.put("city", code);
         return NetworkManager.getCommonClient(Constant.BASE_URL)
                 .create(WeatherSeaviceApi.class)
                 .doGetWeather(map)

@@ -1,9 +1,11 @@
 package sunxl8.easyweather.ui;
 
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,10 +23,14 @@ import java.util.List;
 import butterknife.BindView;
 import me.relex.circleindicator.CircleIndicator;
 import rx.functions.Action1;
+import sunxl8.android_lib.utils.RxBus;
 import sunxl8.easyweather.R;
 import sunxl8.easyweather.base.WeatherBaseActivity;
 import sunxl8.easyweather.db.CityEntity;
 import sunxl8.easyweather.db.DBManager;
+import sunxl8.easyweather.entity.SearchResponseEntity;
+import sunxl8.easyweather.event.AddCityEvent;
+import sunxl8.easyweather.network.WeatherRequest;
 
 /**
  * Created by sunxl8 on 2017/1/12.
@@ -42,6 +48,7 @@ public class MainActivity extends WeatherBaseActivity {
     ViewPager mViewPager;
 
     private List<String> mListTitles;
+    private List<String> mListCodes;
     private List<Fragment> mListFragment;
     private MyCityAdapter mAdapter;
 
@@ -53,17 +60,24 @@ public class MainActivity extends WeatherBaseActivity {
     @Override
     protected void initView() {
         mListTitles = new ArrayList<>();
+        mListCodes = new ArrayList<>();
         RxView.clicks(mIvPlus)
                 .compose(this.bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribe(aVoid -> {
                     //添加城市
-                    CityEntity city = new CityEntity();
-                    city.setCity("北京");
-                    if (city.saveIfNotExist("city = ?", "北京")) {
-                        addCity("北京");
-                    }
+                    startActivity(new Intent(this, CitySelectActivity.class));
                 });
         mViewPager.setOffscreenPageLimit(3);
+        RxBus.getInstance().onEvent(AddCityEvent.class)
+                .compose(this.bindUntilEvent(ActivityEvent.DESTROY))
+                .subscribe(event -> {
+                    CityEntity city = new CityEntity();
+                    city.setCity(event.getCityName());
+                    city.setCode(event.getCityCode());
+                    if (city.saveIfNotExist("code = ?", event.getCityCode())) {
+                        addCity(event.getCityName(), event.getCityCode());
+                    }
+                });
     }
 
     @Override
@@ -78,17 +92,17 @@ public class MainActivity extends WeatherBaseActivity {
                 });
         mListFragment = new ArrayList<>();
         for (int i = 0; i < mListTitles.size(); i++) {
-            mListFragment.add(WeatherFragment.newInstance(mListTitles.get(i)));
+            mListFragment.add(WeatherFragment.newInstance(mListCodes.get(i)));
         }
         mAdapter = new MyCityAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(mAdapter);
         mIndicator.setViewPager(mViewPager);
     }
 
-    private void addCity(String city) {
+    private void addCity(String city, String code) {
         mListTitles.add(city);
         mTvCity.setText(city);
-        mListFragment.add(WeatherFragment.newInstance(city));
+        mListFragment.add(WeatherFragment.newInstance(code));
         mAdapter.notifyDataSetChanged();
         mViewPager.setCurrentItem(mListFragment.size());
         mIndicator.setViewPager(mViewPager);
@@ -99,6 +113,7 @@ public class MainActivity extends WeatherBaseActivity {
         if (listCities != null && listCities.size() > 0) {
             for (CityEntity entity : listCities) {
                 mListTitles.add(entity.getCity());
+                mListCodes.add(entity.getCode());
             }
         } else {
             showLoading();
@@ -113,7 +128,6 @@ public class MainActivity extends WeatherBaseActivity {
     public AMapLocationListener mLocationListener = new AMapLocationListener() {
         @Override
         public void onLocationChanged(AMapLocation amapLocation) {
-            dismissLoading();
             if (amapLocation != null) {
                 if (amapLocation.getErrorCode() == 0) {
                     //可在其中解析amapLocation获取相应内容。
@@ -134,7 +148,7 @@ public class MainActivity extends WeatherBaseActivity {
                     amapLocation.getBuildingId();//获取当前室内定位的建筑物Id
                     amapLocation.getFloor();//获取当前室内定位的楼层
                     amapLocation.getGpsAccuracyStatus();//获取GPS的当前状态
-                    addCity(amapLocation.getCity());
+                    searchCity(amapLocation.getCity());
                 } else {
                     showToast("定位失败，ErrCode:" + amapLocation.getErrorCode() + ", errInfo:"
                             + amapLocation.getErrorInfo());
@@ -175,6 +189,20 @@ public class MainActivity extends WeatherBaseActivity {
         if (mLocationClient != null) {
             mLocationClient.onDestroy();//销毁定位客户端，同时销毁本地定位服务。
         }
+    }
+
+    private void searchCity(String keywords) {
+        WeatherRequest.doSearchCity(keywords)
+                .compose(this.bindUntilEvent(ActivityEvent.DESTROY))
+                .subscribe(entity -> {
+                    dismissLoading();
+                    if (entity.getHeWeather5().get(0).getStatus().equals("ok")) {
+                        SearchResponseEntity.HeWeather5Bean.BasicBean bean = entity.getHeWeather5().get(0).getBasic();
+                        addCity(bean.getCity(),bean.getId());
+                    } else {
+                        showToast("定位失败");
+                    }
+                });
     }
 
     class MyCityAdapter extends FragmentPagerAdapter {

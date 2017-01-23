@@ -1,6 +1,5 @@
 package sunxl8.easyweather.ui;
 
-import android.app.AlertDialog;
 import android.os.Bundle;
 import android.widget.TextView;
 
@@ -9,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import dmax.dialog.SpotsDialog;
 import rx.Subscriber;
 import sunxl8.android_lib.utils.TimeUtils;
 import sunxl8.easyweather.R;
@@ -41,10 +39,10 @@ public class WeatherFragment extends WeatherBaseFragment {
 
     private WeatherEntity entity;
 
-    public static WeatherFragment newInstance(String city) {
+    public static WeatherFragment newInstance(String code) {
         WeatherFragment fragment = new WeatherFragment();
         Bundle bundle = new Bundle();
-        bundle.putString("city", city);
+        bundle.putString("code", code);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -62,20 +60,20 @@ public class WeatherFragment extends WeatherBaseFragment {
     @Override
     protected void initData() {
         mActivity.showLoading();
-        String city = getArguments().getString("city");
-        List<WeatherEntity> list = DBManager.queryWeatherByDateAndCity(
+        String code = getArguments().getString("code");
+        List<WeatherEntity> list = DBManager.queryWeatherByDateAndCityCode(
                 TimeUtils.milliseconds2String(System.currentTimeMillis(), new SimpleDateFormat("yyyy-MM-dd"))
-                , city);
+                , code);
         if (list != null && list.size() > 0) {
             entity = list.get(0);
             show(entity);
         } else {
-            getWeather(city);
+            getWeather(code);
         }
     }
 
-    private void getWeather(String city) {
-        WeatherRequest.doGetWeather(city)
+    private void getWeather(String code) {
+        WeatherRequest.doGetWeather(code)
                 .subscribe(new Subscriber<WeatherResponseEntity>() {
                     @Override
                     public void onCompleted() {
