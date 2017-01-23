@@ -1,6 +1,7 @@
 package sunxl8.easyweather.ui;
 
 import android.app.AlertDialog;
+import android.os.Bundle;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
@@ -41,6 +42,14 @@ public class WeatherFragment extends WeatherBaseFragment {
     private AlertDialog dialog;
     private WeatherEntity entity;
 
+    public static WeatherFragment newInstance(String city) {
+        WeatherFragment fragment = new WeatherFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("city", city);
+        fragment.setArguments(bundle);
+        return fragment;
+    }
+
     @Override
     protected int setContentViewId() {
         return R.layout.fragment_weather;
@@ -53,20 +62,22 @@ public class WeatherFragment extends WeatherBaseFragment {
 
     @Override
     protected void initData() {
+        String city = getArguments().getString("city");
         dialog = new SpotsDialog(mActivity, R.style.LoadingDialog);
         dialog.show();
-        List<WeatherEntity> list = DBManager.queryWeatherByDate(
-                TimeUtils.milliseconds2String(System.currentTimeMillis(), new SimpleDateFormat("yyyy-MM-dd")));
+        List<WeatherEntity> list = DBManager.queryWeatherByDateAndCity(
+                TimeUtils.milliseconds2String(System.currentTimeMillis(), new SimpleDateFormat("yyyy-MM-dd"))
+                , city);
         if (list != null && list.size() > 0) {
             entity = list.get(0);
             show(entity);
         } else {
-            getWeather();
+            getWeather(city);
         }
     }
 
-    private void getWeather() {
-        WeatherRequest.doGetWeather("上海")
+    private void getWeather(String city) {
+        WeatherRequest.doGetWeather(city)
                 .subscribe(new Subscriber<WeatherResponseEntity>() {
                     @Override
                     public void onCompleted() {
@@ -170,14 +181,13 @@ public class WeatherFragment extends WeatherBaseFragment {
         itemWind.setItemData(listWind);
 
         List<String> listBrf = new ArrayList<>();
-        listBrf.add("舒适度指数：" + entity.getComfBrf());
         listBrf.add("洗车指数：" + entity.getCwBrf());
         listBrf.add("穿衣指数：" + entity.getDrsgBrf());
         listBrf.add("感冒指数：" + entity.getFluBrf());
         listBrf.add("运动指数：" + entity.getSportBrf());
         listBrf.add("旅游指数：" + entity.getTravBrf());
         listBrf.add("紫外线指数：" + entity.getUvBrf());
-        itemBrf.setItemTitle("生活指数");
+        itemBrf.setItemTitle("舒适度指数：" + entity.getComfBrf());
         itemBrf.setItemData(listBrf);
     }
 }

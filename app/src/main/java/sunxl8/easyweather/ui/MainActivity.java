@@ -55,7 +55,7 @@ public class MainActivity extends WeatherBaseActivity {
                     //添加城市
                     CityEntity city = new CityEntity();
                     city.setCity("北京");
-                    if (city.saveIfNotExist("city = ?", "北京")){
+                    if (city.saveIfNotExist("city = ?", "北京")) {
                         addCity("北京");
                     }
                 });
@@ -72,16 +72,16 @@ public class MainActivity extends WeatherBaseActivity {
                 });
         mListFragment = new ArrayList<>();
         for (int i = 0; i < mListTitles.size(); i++) {
-            mListFragment.add(new WeatherFragment());
+            mListFragment.add(WeatherFragment.newInstance(mListTitles.get(i)));
         }
         mAdapter = new MyCityAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(mAdapter);
         mIndicator.setViewPager(mViewPager);
     }
 
-    private void addCity(String city){
+    private void addCity(String city) {
         mListTitles.add(city);
-        mListFragment.add(new WeatherFragment());
+        mListFragment.add(WeatherFragment.newInstance(city));
         mAdapter.notifyDataSetChanged();
         mViewPager.setCurrentItem(mListFragment.size());
         mIndicator.setViewPager(mViewPager);
