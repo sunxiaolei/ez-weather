@@ -39,7 +39,6 @@ public class WeatherFragment extends WeatherBaseFragment {
     @BindView(R.id.item_brf)
     WeatherItem itemBrf;
 
-    private AlertDialog dialog;
     private WeatherEntity entity;
 
     public static WeatherFragment newInstance(String city) {
@@ -62,9 +61,8 @@ public class WeatherFragment extends WeatherBaseFragment {
 
     @Override
     protected void initData() {
+        mActivity.showLoading();
         String city = getArguments().getString("city");
-        dialog = new SpotsDialog(mActivity, R.style.LoadingDialog);
-        dialog.show();
         List<WeatherEntity> list = DBManager.queryWeatherByDateAndCity(
                 TimeUtils.milliseconds2String(System.currentTimeMillis(), new SimpleDateFormat("yyyy-MM-dd"))
                 , city);
@@ -147,7 +145,7 @@ public class WeatherFragment extends WeatherBaseFragment {
     }
 
     private void show(WeatherEntity entity) {
-        dialog.dismiss();
+        mActivity.dismissLoading();
         tvWeatherDes.setText(entity.getTxt());
         tvWeatherTemp.setText(entity.getTmp() + "℃");
 

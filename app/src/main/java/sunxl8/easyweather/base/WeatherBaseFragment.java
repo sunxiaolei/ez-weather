@@ -12,12 +12,12 @@ import sunxl8.android_lib.base.BaseFragment;
 
 public abstract class WeatherBaseFragment extends BaseFragment {
 
-    protected BaseActivity mActivity;
+    protected WeatherBaseActivity mActivity;
 
     @Override
     protected void init(View view) {
         ButterKnife.bind(this, view);
-        mActivity = (BaseActivity) getActivity();
+        mActivity = (WeatherBaseActivity) getActivity();
     }
 
 }

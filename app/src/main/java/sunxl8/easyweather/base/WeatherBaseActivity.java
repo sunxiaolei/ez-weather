@@ -1,5 +1,6 @@
 package sunxl8.easyweather.base;
 
+import android.app.AlertDialog;
 import android.os.Build;
 import android.support.v7.widget.Toolbar;
 import android.view.WindowManager;
@@ -11,6 +12,7 @@ import javax.annotation.Nullable;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import dmax.dialog.SpotsDialog;
 import sunxl8.android_lib.base.BaseActivity;
 import sunxl8.easyweather.R;
 
@@ -19,6 +21,8 @@ import sunxl8.easyweather.R;
  */
 
 public abstract class WeatherBaseActivity extends BaseActivity {
+
+    private AlertDialog loadingDialog;
 
     @Nullable
     @BindView(R.id.toolbar)
@@ -46,4 +50,19 @@ public abstract class WeatherBaseActivity extends BaseActivity {
     public void showToast(String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
+
+    public void showLoading() {
+        if (loadingDialog == null) {
+            loadingDialog = new SpotsDialog(this, R.style.LoadingDialog);
+        }
+        loadingDialog.show();
+    }
+
+
+    public void dismissLoading() {
+        if (loadingDialog != null) {
+            loadingDialog.dismiss();
+        }
+    }
+
 }

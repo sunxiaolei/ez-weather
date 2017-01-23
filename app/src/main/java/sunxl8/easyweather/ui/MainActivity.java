@@ -101,6 +101,7 @@ public class MainActivity extends WeatherBaseActivity {
                 mListTitles.add(entity.getCity());
             }
         } else {
+            showLoading();
             //定位
             getLocation();
         }
@@ -112,6 +113,7 @@ public class MainActivity extends WeatherBaseActivity {
     public AMapLocationListener mLocationListener = new AMapLocationListener() {
         @Override
         public void onLocationChanged(AMapLocation amapLocation) {
+            dismissLoading();
             if (amapLocation != null) {
                 if (amapLocation.getErrorCode() == 0) {
                     //可在其中解析amapLocation获取相应内容。
