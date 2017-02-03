@@ -22,4 +22,11 @@ public class DBManager {
         return DataSupport
                 .findAll(CityEntity.class);
     }
+
+    public static void deleteCityById(String cityId) {
+        DataSupport
+                .deleteAll(WeatherEntity.class, "cityId = ?", cityId);
+        DataSupport
+                .deleteAll(CityEntity.class, "code = ?", cityId);
+    }
 }

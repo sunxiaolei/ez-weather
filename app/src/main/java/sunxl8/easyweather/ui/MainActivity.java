@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.amap.api.location.AMapLocation;
@@ -15,6 +16,8 @@ import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.jakewharton.rxbinding.support.v4.view.RxViewPager;
 import com.jakewharton.rxbinding.view.RxView;
+import com.nispok.snackbar.Snackbar;
+import com.nispok.snackbar.listeners.ActionClickListener;
 import com.trello.rxlifecycle.android.ActivityEvent;
 
 import java.util.ArrayList;
@@ -67,6 +70,17 @@ public class MainActivity extends WeatherBaseActivity {
                     //添加城市
                     startActivity(new Intent(this, CitySelectActivity.class));
                 });
+        RxView.clicks(mTvCity)
+                .compose(this.bindUntilEvent(ActivityEvent.DESTROY))
+                .subscribe(aVoid -> {
+                    Snackbar.with(getApplicationContext())
+                            .text("删除这个城市")
+                            .actionLabel("确定")
+                            .actionListener(snackbar -> {
+                                deleteCity();
+                            })
+                            .show(this);
+                });
         mViewPager.setOffscreenPageLimit(3);
         RxBus.getInstance().onEvent(AddCityEvent.class)
                 .compose(this.bindUntilEvent(ActivityEvent.DESTROY))
@@ -106,6 +120,16 @@ public class MainActivity extends WeatherBaseActivity {
         mAdapter.notifyDataSetChanged();
         mViewPager.setCurrentItem(mListFragment.size());
         mIndicator.setViewPager(mViewPager);
+    }
+
+    private void deleteCity() {
+        int loc = mListTitles.indexOf(mTvCity.getText().toString());
+        String cityId = mListCodes.get(loc);
+        DBManager.deleteCityById(cityId);
+        mListTitles.clear();
+        mListCodes.clear();
+        mListFragment.clear();
+        initData();
     }
 
     private void getLocalCities() {
@@ -198,7 +222,7 @@ public class MainActivity extends WeatherBaseActivity {
                     dismissLoading();
                     if (entity.getHeWeather5().get(0).getStatus().equals("ok")) {
                         SearchResponseEntity.HeWeather5Bean.BasicBean bean = entity.getHeWeather5().get(0).getBasic();
-                        addCity(bean.getCity(),bean.getId());
+                        addCity(bean.getCity(), bean.getId());
                     } else {
                         showToast("定位失败");
                     }

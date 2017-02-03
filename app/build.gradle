@@ -51,4 +51,6 @@ dependencies {
     compile 'me.relex:circleindicator:1.2.2@aar'
     //dialog
     compile 'com.github.d-max:spots-dialog:0.7@aar'
+    //snackbar
+    compile 'com.nispok:snackbar:2.11.+'
 }
