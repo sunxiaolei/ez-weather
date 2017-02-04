@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.ImageView;
@@ -115,6 +117,7 @@ public class MainActivity extends WeatherBaseActivity {
 
     private void addCity(String city, String code) {
         mListTitles.add(city);
+        mListCodes.add(code);
         mTvCity.setText(city);
         mListFragment.add(WeatherFragment.newInstance(code));
         mAdapter.notifyDataSetChanged();
@@ -126,10 +129,19 @@ public class MainActivity extends WeatherBaseActivity {
         int loc = mListTitles.indexOf(mTvCity.getText().toString());
         String cityId = mListCodes.get(loc);
         DBManager.deleteCityById(cityId);
-        mListTitles.clear();
-        mListCodes.clear();
-        mListFragment.clear();
-        initData();
+//        mListTitles.clear();
+//        mListCodes.clear();
+//        mListFragment.clear();
+//        initData();
+        mListTitles.remove(loc);
+        mListCodes.remove(loc);
+        mListFragment.remove(loc);
+        mViewPager.removeViewAt(loc);
+        mAdapter.notifyDataSetChanged();
+        mIndicator.setViewPager(mViewPager);
+        String title = loc == 0 ? loc == mListTitles.size() ? "--" : mListTitles.get(loc)
+                : mListTitles.get(loc - 1);
+        mTvCity.setText(title);
     }
 
     private void getLocalCities() {
@@ -229,7 +241,7 @@ public class MainActivity extends WeatherBaseActivity {
                 });
     }
 
-    class MyCityAdapter extends FragmentPagerAdapter {
+    class MyCityAdapter extends FragmentStatePagerAdapter {
 
         public MyCityAdapter(FragmentManager fm) {
             super(fm);
@@ -248,6 +260,11 @@ public class MainActivity extends WeatherBaseActivity {
         @Override
         public CharSequence getPageTitle(int position) {
             return mListTitles.get(position);
+        }
+
+        @Override
+        public int getItemPosition(Object object) {
+            return PagerAdapter.POSITION_NONE;
         }
     }
 }
