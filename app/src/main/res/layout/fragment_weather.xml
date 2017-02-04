@@ -1,55 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView
+<android.support.v4.widget.SwipeRefreshLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_refresh"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="20dp">
+        android:layout_height="wrap_content">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="20dp">
 
-            <TextView
-                android:id="@+id/tv_weather_temp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:textSize="50sp"/>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/tv_weather_des"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="15dp"
-                android:layout_toLeftOf="@id/tv_weather_temp"/>
+                <TextView
+                    android:id="@+id/tv_weather_temp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:textSize="50sp"/>
 
-        </RelativeLayout>
+                <TextView
+                    android:id="@+id/tv_weather_des"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="15dp"
+                    android:layout_toLeftOf="@id/tv_weather_temp"/>
 
-        <sunxl8.easyweather.widget.WeatherItem
-            android:id="@+id/item_aqi"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+                <TextView
+                    android:id="@+id/tv_weather_updatetime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@+id/tv_weather_temp"
+                    android:layout_marginTop="5dp"/>
 
-        <sunxl8.easyweather.widget.WeatherItem
-            android:id="@+id/item_detail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            </RelativeLayout>
 
-        <sunxl8.easyweather.widget.WeatherItem
-            android:id="@+id/item_wind"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            <sunxl8.easyweather.widget.WeatherItem
+                android:id="@+id/item_aqi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
-        <sunxl8.easyweather.widget.WeatherItem
-            android:id="@+id/item_brf"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            <sunxl8.easyweather.widget.WeatherItem
+                android:id="@+id/item_detail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
-    </LinearLayout>
-</ScrollView>
+            <sunxl8.easyweather.widget.WeatherItem
+                android:id="@+id/item_wind"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <sunxl8.easyweather.widget.WeatherItem
+                android:id="@+id/item_brf"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+    </ScrollView>
+</android.support.v4.widget.SwipeRefreshLayout>

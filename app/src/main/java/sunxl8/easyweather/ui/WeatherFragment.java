@@ -1,16 +1,23 @@
 package sunxl8.easyweather.ui;
 
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
+import com.trello.rxlifecycle.android.FragmentEvent;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
+import rx.Observable;
 import rx.Subscriber;
+import rx.functions.Action1;
+import sunxl8.android_lib.network.SchedulersCompat;
 import sunxl8.android_lib.utils.TimeUtils;
 import sunxl8.easyweather.R;
 import sunxl8.easyweather.base.WeatherBaseFragment;
@@ -24,10 +31,14 @@ import sunxl8.easyweather.widget.WeatherItem;
  * Created by sunxl8 on 2017/1/22.
  */
 
-public class WeatherFragment extends WeatherBaseFragment {
+public class WeatherFragment extends WeatherBaseFragment implements SwipeRefreshLayout.OnRefreshListener {
 
+    @BindView(R.id.layout_refresh)
+    SwipeRefreshLayout layoutRefresh;
     @BindView(R.id.tv_weather_des)
     TextView tvWeatherDes;
+    @BindView(R.id.tv_weather_updatetime)
+    TextView tvUpdateTime;
     @BindView(R.id.tv_weather_temp)
     TextView tvWeatherTemp;
     @BindView(R.id.item_aqi)
@@ -40,6 +51,8 @@ public class WeatherFragment extends WeatherBaseFragment {
     WeatherItem itemBrf;
 
     private WeatherEntity entity;
+
+    private String cityId;
 
     public static WeatherFragment newInstance(String code) {
         WeatherFragment fragment = new WeatherFragment();
@@ -56,25 +69,29 @@ public class WeatherFragment extends WeatherBaseFragment {
 
     @Override
     protected void initView() {
-
+        layoutRefresh.setOnRefreshListener(this);
+        layoutRefresh.setColorSchemeColors(Color.RED, Color.GREEN, Color.BLUE);
+        layoutRefresh.setProgressBackgroundColorSchemeColor(Color.parseColor("#55000000"));
     }
 
     @Override
     protected void initData() {
-        mActivity.showLoading();
-        String code = getArguments().getString("code");
+        if (isVisible()) {
+            mActivity.showLoading();
+        }
+        cityId = getArguments().getString("code");
         List<WeatherEntity> list = DBManager.queryWeatherByDateAndCityCode(
                 TimeUtils.milliseconds2String(System.currentTimeMillis(), new SimpleDateFormat("yyyy-MM-dd"))
-                , code);
+                , cityId);
         if (list != null && list.size() > 0) {
             entity = list.get(0);
             show(entity);
         } else {
-            getWeather(code);
+            getWeather(cityId, 0);
         }
     }
 
-    private void getWeather(String code) {
+    private void getWeather(String code, int type) {
         WeatherRequest.doGetWeather(code)
                 .subscribe(new Subscriber<WeatherResponseEntity>() {
                     @Override
@@ -86,17 +103,19 @@ public class WeatherFragment extends WeatherBaseFragment {
                     public void onError(Throwable e) {
                         mActivity.dismissLoading();
                         mActivity.showToast(e.getMessage());
+                        layoutRefresh.setRefreshing(false);
                         Logger.e(e.getMessage());
                     }
 
                     @Override
                     public void onNext(WeatherResponseEntity entity) {
-                        save(entity.getHeWeather5().get(0));
+                        layoutRefresh.setRefreshing(false);
+                        save(entity.getHeWeather5().get(0), type);
                     }
                 });
     }
 
-    private void save(WeatherResponseEntity.HeWeather5Bean bean) {
+    private void save(WeatherResponseEntity.HeWeather5Bean bean, int type) {
         WeatherEntity entity = new WeatherEntity();
         entity.setCity(bean.getBasic().getCity());
         entity.setCityId(bean.getBasic().getId());
@@ -104,6 +123,7 @@ public class WeatherFragment extends WeatherBaseFragment {
         entity.setLat(bean.getBasic().getLat());
         entity.setLon(bean.getBasic().getLon());
         entity.setProv(bean.getBasic().getProv());
+        entity.setUpdateTime(bean.getBasic().getUpdate().getLoc());
         entity.setDate(TimeUtils.date2String(TimeUtils.string2Date(bean.getBasic().getUpdate().getLoc(),
                 new SimpleDateFormat("yyyy-MM-dd HH:mm")), new SimpleDateFormat("yyyy-MM-dd")));
         entity.setCode(bean.getNow().getCond().getCode());
@@ -142,7 +162,11 @@ public class WeatherFragment extends WeatherBaseFragment {
         entity.setTravTxt(bean.getSuggestion().getTrav().getTxt());
         entity.setUvBrf(bean.getSuggestion().getUv().getBrf());
         entity.setUvTxt(bean.getSuggestion().getUv().getTxt());
-        entity.save();
+        if (type == 0) {
+            entity.save();
+        } else {
+            entity.update(DBManager.getEntityIdByCityId(cityId));
+        }
         show(entity);
     }
 
@@ -150,6 +174,7 @@ public class WeatherFragment extends WeatherBaseFragment {
         mActivity.dismissLoading();
         tvWeatherDes.setText(entity.getTxt());
         tvWeatherTemp.setText(entity.getTmp() + "℃");
+        tvUpdateTime.setText("更新时间：" + entity.getUpdateTime());
 
         List<String> listAqi = new ArrayList<>();
         listAqi.add("AQI：" + entity.getAqi());
@@ -189,5 +214,16 @@ public class WeatherFragment extends WeatherBaseFragment {
         listBrf.add("紫外线指数：" + entity.getUvBrf());
         itemBrf.setItemTitle("舒适度指数：" + entity.getComfBrf());
         itemBrf.setItemData(listBrf);
+    }
+
+    @Override
+    public void onRefresh() {
+//        Observable.timer(2000, TimeUnit.MILLISECONDS)
+//                .compose(this.bindUntilEvent(FragmentEvent.DESTROY))
+//                .compose(SchedulersCompat.applyIoSchedulers())
+//                .subscribe(aLong -> {
+//                    layoutRefresh.setRefreshing(false);
+//                });
+        getWeather(cityId, 1);
     }
 }

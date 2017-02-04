@@ -29,4 +29,11 @@ public class DBManager {
         DataSupport
                 .deleteAll(CityEntity.class, "code = ?", cityId);
     }
+
+    public static long getEntityIdByCityId(String cityId) {
+        List<WeatherEntity> list = DataSupport
+                .where("cityId = ?", cityId)
+                .find(WeatherEntity.class);
+        return list.size() > 0 ? list.get(0).getId() : 0;
+    }
 }

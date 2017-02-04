@@ -129,10 +129,6 @@ public class MainActivity extends WeatherBaseActivity {
         int loc = mListTitles.indexOf(mTvCity.getText().toString());
         String cityId = mListCodes.get(loc);
         DBManager.deleteCityById(cityId);
-//        mListTitles.clear();
-//        mListCodes.clear();
-//        mListFragment.clear();
-//        initData();
         mListTitles.remove(loc);
         mListCodes.remove(loc);
         mListFragment.remove(loc);

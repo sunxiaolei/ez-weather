@@ -36,6 +36,10 @@ public class WeatherEntity extends DataSupport implements Serializable{
      */
     private String prov;
     /**
+     * 更新时间
+     */
+    private String updateTime;
+    /**
      * 日期
      */
     private String date;
@@ -154,6 +158,14 @@ public class WeatherEntity extends DataSupport implements Serializable{
      */
     private String uvBrf;
     private String uvTxt;
+
+    public String getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(String updateTime) {
+        this.updateTime = updateTime;
+    }
 
     public long getId() {
         return id;
