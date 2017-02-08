@@ -74,9 +74,20 @@ public class WeatherFragment extends WeatherBaseFragment implements SwipeRefresh
         layoutRefresh.setProgressBackgroundColorSchemeColor(Color.parseColor("#55000000"));
     }
 
+    private boolean isVisible;
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (getUserVisibleHint()) {
+            isVisible = true;
+        } else {
+            isVisible = false;
+        }
+    }
+
     @Override
     protected void initData() {
-        if (isVisible()) {
+        if (isVisible) {
             mActivity.showLoading();
         }
         cityId = getArguments().getString("code");
